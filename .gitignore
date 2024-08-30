@@ -1,0 +1,6 @@
+.idea
+.DS_Store
+go.sum
+*.gif
+*.exe
+*.exe~
