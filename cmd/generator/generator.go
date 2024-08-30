@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	baseUrl  = "https://raw.githubusercontent.com/swiftlang/github.com/Laky-64/goswift/main/include/github.com/Laky-64/goswift/Demangling/"
+	baseUrl  = "https://raw.githubusercontent.com/swiftlang/swift/main/include/swift/Demangling/"
 	kindName = "NodeKind"
 )
 
