@@ -35,14 +35,14 @@ go get github.com/Laky-64/swift@latest
 Then, `import` it in your Go files:
 
 ```go
-import "github.com/Laky-64/swift"
+import "github.com/Laky-64/swift/demangling"
 ```
 
 The library is designed to be simple and easy to use.
 Here's an example of a simple demangling:
 
 ```go
-demangled, err := swift.Demangle("Say12Smol.Animals3FoxCG5foxes_Su5countt")
+demangled, err := demangling.Demangle("Say12Smol.Animals3FoxCG5foxes_Su5countt")
 if err != nil {
     panic(err)
 }
