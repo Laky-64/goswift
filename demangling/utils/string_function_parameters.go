@@ -47,7 +47,7 @@ func (ctx *Context) stringFunctionParameters(labelList, parameterType *demanglin
 		if showTypes {
 			ctx.stringNode(param, depth+1, false)
 		}
-		if i > 0 {
+		if i < len(parameters.Children)-1 {
 			ctx.WriteString(", ")
 		}
 	}
