@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/Laky-64/swift/demangling"
+	"github.com/Laky-64/swift/demangling/utils"
 	"log"
-	"swift/demangling"
-	"swift/demangling/utils"
 )
 
 func main() {

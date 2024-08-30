@@ -1,6 +1,6 @@
 package utils
 
-import "swift/demangling"
+import "github.com/Laky-64/swift/demangling"
 
 func (ctx *Context) findSugar(node *demangling.Node) sugarType {
 	if len(node.Children) == 1 && node.Kind == demangling.TypeKind {

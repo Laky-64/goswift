@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/Laky-64/gologging"
+	"github.com/Laky-64/swift/demangling/utils"
+	"github.com/Laky-64/swift/proxy"
 	"github.com/blacktop/go-macho"
 	"log"
-	"swift/demangling/utils"
-	"swift/proxy"
 )
 
 func main() {

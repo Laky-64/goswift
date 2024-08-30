@@ -1,7 +1,7 @@
 package demangling
 
 // Reference:
-// https://github.com/swiftlang/swift/blob/main/lib/Demangling/Demangler.cpp#L37C8-L53C2
+// https://github.com/swiftlang/github.com/Laky-64/swift/blob/main/lib/Demangling/Demangler.cpp#L37C8-L53C2
 func isDeclName(kind NodeKind) bool {
 	switch kind {
 	case IdentifierKind,

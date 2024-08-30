@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"github.com/Laky-64/swift/demangling"
 	"strconv"
 	"strings"
-	"swift/demangling"
 )
 
 func (ctx *Context) stringEntity(entity *demangling.Node, depth int, asPrefixContent bool, typePr typePrinting, hasName bool, extraName string, extraIndex int, overwriteName string) *demangling.Node {

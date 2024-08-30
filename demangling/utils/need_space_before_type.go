@@ -1,6 +1,6 @@
 package utils
 
-import "swift/demangling"
+import "github.com/Laky-64/swift/demangling"
 
 func (ctx *Context) needSpaceBeforeType(t *demangling.Node) bool {
 	switch t.Kind {

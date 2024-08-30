@@ -1,6 +1,6 @@
 package utils
 
-import "swift/demangling"
+import "github.com/Laky-64/swift/demangling"
 
 func (ctx *Context) printChildren(node *demangling.Node, depth int, separator string) {
 	if node == nil {

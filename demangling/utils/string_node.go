@@ -2,11 +2,11 @@ package utils
 
 import (
 	"fmt"
-	"swift/demangling"
+	"github.com/Laky-64/swift/demangling"
 )
 
 // Reference:
-// https://github.com/swiftlang/swift/blob/main/lib/Demangling/NodePrinter.cpp
+// https://github.com/swiftlang/github.com/Laky-64/swift/blob/main/lib/Demangling/NodePrinter.cpp
 func (ctx *Context) stringNode(node *demangling.Node, depth int, asPrefixContent bool) *demangling.Node {
 	if depth > maxDepth {
 		ctx.WriteString("<<too complex>>")

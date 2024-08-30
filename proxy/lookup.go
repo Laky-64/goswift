@@ -2,9 +2,9 @@ package proxy
 
 import (
 	"fmt"
+	"github.com/Laky-64/swift/demangling"
 	"github.com/blacktop/go-macho/types/swift"
 	"strings"
-	"swift/demangling"
 )
 
 func (ctx *Context) lookup(kind demangling.SymbolicReferenceKind, addr uint64) (*demangling.Node, error) {

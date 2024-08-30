@@ -390,7 +390,7 @@ func (ctx *Context) pushMultiSubstitutions(repeatCount, subStIdx int) (*Node, er
 }
 
 // Reference:
-// https://github.com/swiftlang/swift/blob/main/lib/Demangling/Demangler.cpp#L110
+// https://github.com/swiftlang/github.com/Laky-64/swift/blob/main/lib/Demangling/Demangler.cpp#L110
 func isContext(_ NodeKind) bool {
 	return true
 }

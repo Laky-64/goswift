@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"swift/demangling"
+	"github.com/Laky-64/swift/demangling"
 )
 
 func ToString(node *demangling.Node, opt OptionMode) string {

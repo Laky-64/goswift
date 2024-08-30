@@ -1,6 +1,6 @@
 package utils
 
-import "swift/demangling"
+import "github.com/Laky-64/swift/demangling"
 
 func IsSimpleType(node *demangling.Node) bool {
 	switch node.Kind {

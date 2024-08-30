@@ -2,8 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"github.com/Laky-64/swift/demangling"
 	"strings"
-	"swift/demangling"
 )
 
 func recurseNodeTree(builder *strings.Builder, node *demangling.Node, depth int) {

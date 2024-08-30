@@ -1,4 +1,4 @@
-module swift
+module github.com/Laky-64/swift
 
 go 1.23.0
 

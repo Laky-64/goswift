@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"github.com/Laky-64/swift/demangling"
 	"strings"
-	"swift/demangling"
 )
 
 func Tree(node *demangling.Node) string {
