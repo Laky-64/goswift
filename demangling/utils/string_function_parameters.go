@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/Laky-64/swift/demangling"
+	"github.com/Laky-64/goswift/demangling"
 )
 
 func (ctx *Context) stringFunctionParameters(labelList, parameterType *demangling.Node, depth int, showTypes bool) {

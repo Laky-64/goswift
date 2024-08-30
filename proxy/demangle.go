@@ -1,6 +1,6 @@
 package proxy
 
-import "github.com/Laky-64/swift/demangling"
+import "github.com/Laky-64/goswift/demangling"
 
 func (ctx *Context) Demangle(addr uint64) (*demangling.Node, error) {
 	buf, err := ctx.buildBuffer(addr)

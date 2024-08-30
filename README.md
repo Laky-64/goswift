@@ -29,13 +29,13 @@ by the Swift compiler, converting them into a human-readable format.
 Use `go get` to download the dependency.
 
 ```bash
-go get github.com/Laky-64/swift@latest
+go get github.com/Laky-64/goswift@latest
 ```
 
 Then, `import` it in your Go files:
 
 ```go
-import "github.com/Laky-64/swift/demangling"
+import "github.com/Laky-64/goswift/demangling"
 ```
 
 The library is designed to be simple and easy to use.

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"github.com/Laky-64/swift/demangling"
+	"github.com/Laky-64/goswift/demangling"
 	"strings"
 )
 

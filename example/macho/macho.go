@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/Laky-64/gologging"
-	"github.com/Laky-64/swift/demangling/utils"
-	"github.com/Laky-64/swift/proxy"
+	"github.com/Laky-64/goswift/demangling/utils"
+	"github.com/Laky-64/goswift/proxy"
 	"github.com/blacktop/go-macho"
 	"log"
 )

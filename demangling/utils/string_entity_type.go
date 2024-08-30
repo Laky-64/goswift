@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/Laky-64/swift/demangling"
+import "github.com/Laky-64/goswift/demangling"
 
 func (ctx *Context) stringEntityType(entity *demangling.Node, t *demangling.Node, genericFunctionTypeList *demangling.Node, depth int) {
 	labelList := entity.GetChildIf(demangling.LabelListKind)

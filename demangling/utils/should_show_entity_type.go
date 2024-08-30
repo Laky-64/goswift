@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/Laky-64/swift/demangling"
+import "github.com/Laky-64/goswift/demangling"
 
 func (ctx *Context) shouldShowEntityType(kind demangling.NodeKind) bool {
 	switch kind {

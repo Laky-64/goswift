@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Laky-64/gologging"
-	"github.com/Laky-64/swift/demangling"
-	"github.com/Laky-64/swift/demangling/utils"
+	"github.com/Laky-64/goswift/demangling"
+	"github.com/Laky-64/goswift/demangling/utils"
 )
 
 func main() {

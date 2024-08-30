@@ -1,7 +1,7 @@
 package demangling
 
 // Reference:
-// https://github.com/swiftlang/github.com/Laky-64/swift/blob/main/lib/Demangling/Demangler.cpp#L1002
+// https://github.com/swiftlang/github.com/Laky-64/goswift/blob/main/lib/Demangling/Demangler.cpp#L1002
 func (ctx *Context) operator() (*Node, error) {
 recur:
 	switch ctx.nextChar() {

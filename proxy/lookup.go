@@ -2,7 +2,7 @@ package proxy
 
 import (
 	"fmt"
-	"github.com/Laky-64/swift/demangling"
+	"github.com/Laky-64/goswift/demangling"
 	"github.com/blacktop/go-macho/types/swift"
 	"strings"
 )
