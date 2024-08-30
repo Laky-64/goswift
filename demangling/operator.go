@@ -19,6 +19,8 @@ recur:
 		return ctx.boundGenericType()
 	case 'M':
 		return ctx.metaType()
+	case 'O':
+		return ctx.anyGenericType(EnumKind)
 	case 'S':
 		return ctx.standardSubstitution()
 	case 'V':
