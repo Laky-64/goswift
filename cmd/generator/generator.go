@@ -19,7 +19,7 @@ const (
 
 var (
 	nodeRgx = regexp.MustCompile(`^(NODE|CONTEXT_NODE)\((.*?)\)`)
-	stdRgx  = regexp.MustCompile(`^(STANDARD_TYPE|STANDARD_TYPE_CONCURRENCY)\((.*?), (.*?), (.*?)\)`)
+	stdRgx  = regexp.MustCompile(`^(STANDARD_TYPE|STANDARD_TYPE_CONCURRENCY|OBJC_INTEROP_STANDARD_TYPE)\((.*?), (.*?), (.*?)\)`)
 )
 
 func getContent(fileName string) []string {
@@ -151,7 +151,7 @@ func main() {
 	for _, line := range getContent("StandardTypesMangling.def") {
 		if matches := stdRgx.FindAllStringSubmatch(line, -1); len(matches) > 0 {
 			l := fmt.Sprintf("\t'%s': {%sKind, \"%s\"},\n", matches[0][3], matches[0][2], matches[0][4])
-			if matches[0][1] == "STANDARD_TYPE" {
+			if kind := matches[0][1]; kind == "STANDARD_TYPE" || kind == "OBJC_INTEROP_STANDARD_TYPE" {
 				bufStd.WriteString(l)
 			} else {
 				bufStdC.WriteString(l)
