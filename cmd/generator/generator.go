@@ -57,6 +57,11 @@ func usize(n int) int {
 }
 
 func main() {
+	manualNodeKind := []string{
+		"Unowned",
+		"Unmanaged",
+		"Weak",
+	}
 	log.SetFlags(0)
 	log.SetPrefix("generator: ")
 	pkgList, err := packages.Load(&packages.Config{})
@@ -74,6 +79,27 @@ func main() {
 			constants = append(constants, matches[0][2])
 		}
 	}
+	buf.WriteString("func isContext(kind NodeKind) bool {\n")
+	buf.WriteString("switch kind {\n")
+	for i, constant := range constants {
+		if i == 0 {
+			buf.WriteString("case ")
+		}
+		buf.WriteString(fmt.Sprintf("%sKind", constant))
+		if i < len(constants)-1 {
+			buf.WriteString(", \n")
+		} else {
+			buf.WriteString(":\n")
+			buf.WriteString("return true\n")
+		}
+	}
+	buf.WriteString("default:\n")
+	buf.WriteString("return false\n")
+	buf.WriteString("}\n")
+	buf.WriteString("}\n\n")
+
+	constants = append(constants, manualNodeKind...)
+
 	buf.WriteString("const (\n")
 	for i, constant := range constants {
 		buf.WriteString(fmt.Sprintf("\t%sKind", constant))
