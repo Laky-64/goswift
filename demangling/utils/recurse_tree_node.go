@@ -11,6 +11,9 @@ func recurseNodeTree(builder *strings.Builder, node *demangling.Node, depth int)
 	if node.Text != "" {
 		builder.WriteString(fmt.Sprintf(", text=%q", node.Text))
 	}
+	if node.Index > 0 {
+		builder.WriteString(fmt.Sprintf(", index=%d", node.Index))
+	}
 	builder.WriteString("\n")
 	for _, child := range node.Children {
 		recurseNodeTree(builder, child, depth+1)

@@ -2,7 +2,7 @@ package demangling
 
 import "fmt"
 
-func (ctx *Context) demangleLifetimeDependence() (*Node, error) {
+func (ctx *Context) lifetimeDependence() (*Node, error) {
 	kind := getMangledLifetimeDependenceKind(ctx.nextChar())
 	if kind == UnknownLifetime {
 		return nil, fmt.Errorf("unexpected lifetime dependence kind: %c", ctx.peekChar())

@@ -51,7 +51,7 @@ func (ctx *Context) stringEntity(entity *demangling.Node, depth int, asPrefixCon
 			if name.Kind != demangling.PrivateDeclNameKind {
 				ctx.stringNode(name, depth+1, false)
 			}
-			if privateName := name.GetChildIf(demangling.PrivateDeclNameKind); privateName != nil {
+			if privateName := entity.GetChildIf(demangling.PrivateDeclNameKind); privateName != nil {
 				ctx.stringNode(privateName, depth+1, false)
 			}
 		}
@@ -87,11 +87,11 @@ func (ctx *Context) stringEntity(entity *demangling.Node, depth int, asPrefixCon
 		}
 		if typePr == withColonType {
 			if ctx.DisplayEntityTypes {
-				ctx.WriteString(": ")
+				ctx.WriteString(" : ")
 				ctx.stringEntityType(entity, t, genericFunctionTypeList, depth)
 			}
 		} else if ctx.shouldShowEntityType(entity.Kind) {
-			if multiWordName || ctx.needSpaceBeforeType(t) {
+			if multiWordName || needSpaceBeforeType(t) {
 				ctx.WriteByte(' ')
 			}
 			ctx.stringEntityType(entity, t, genericFunctionTypeList, depth)

@@ -27,7 +27,7 @@ func (ctx *Context) typeAnnotation() (*Node, error) {
 	case 'u':
 		return CreateType(createWithChildren(SendingKind, ctx.popTypeAndGetChild())), nil
 	case 'l':
-		node, err := ctx.demangleLifetimeDependence()
+		node, err := ctx.lifetimeDependence()
 		if err != nil {
 			return nil, err
 		}

@@ -29,6 +29,12 @@ type Options struct {
 	DisplayModuleNames             bool
 	SynthesizeSugarOnTypes         bool
 	ShowFunctionArgumentTypes      bool
+	DisplayProtocolConformances    bool
+	DisplayWhereClauses            bool
+	DisplayLocalNameContexts       bool
+	ShowPrivateDiscriminators      bool
+	DisplayExtensionContexts       bool
+	PrintForTypeName               bool
 	HidingCurrentModule            string
 }
 

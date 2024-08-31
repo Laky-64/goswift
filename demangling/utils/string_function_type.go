@@ -54,7 +54,7 @@ func (ctx *Context) stringFunctionType(labelList, node *demangling.Node, depth i
 	}
 	var thrownErrorNode *demangling.Node
 	if node.Children[startIndex].Kind == demangling.ThrowsAnnotationKind || node.Children[startIndex].Kind == demangling.TypedThrowsAnnotationKind {
-		thrownErrorNode = ctx.stringNode(node.Children[startIndex], depth+1, false)
+		thrownErrorNode = node.Children[startIndex]
 		startIndex++
 	}
 	if node.Children[startIndex].Kind == demangling.ConcurrentFunctionTypeKind {
@@ -99,48 +99,3 @@ func (ctx *Context) stringFunctionType(labelList, node *demangling.Node, depth i
 	}
 	ctx.stringNode(node.Children[argIndex+1], depth+1, false)
 }
-
-/*
-  void printFunctionType(NodePointer LabelList, NodePointer node,
-                         unsigned depth) {
-    switch (diffKind) {
-    case MangledDifferentiabilityKind::Forward:
-      Printer << "@differentiable(_forward) ";
-      break;
-    case MangledDifferentiabilityKind::Reverse:
-      Printer << "@differentiable(reverse) ";
-      break;
-    case MangledDifferentiabilityKind::Linear:
-      Printer << "@differentiable(_linear) ";
-      break;
-    case MangledDifferentiabilityKind::Normal:
-      Printer << "@differentiable ";
-      break;
-    case MangledDifferentiabilityKind::NonDifferentiable:
-      break;
-    }
-
-    if (isSendable)
-      Printer << "@Sendable ";
-
-    printFunctionParameters(LabelList, node->getChild(argIndex), depth,
-                            Options.ShowFunctionArgumentTypes);
-
-    if (!Options.ShowFunctionArgumentTypes)
-      return;
-
-    if (isAsync)
-      Printer << " async";
-
-    if (thrownErrorNode) {
-      print(thrownErrorNode, depth + 1);
-    }
-
-    Printer << " -> ";
-
-    if (hasSendingResult)
-      Printer << "sending ";
-
-    print(node->getChild(argIndex + 1), depth + 1);
-  }
-*/

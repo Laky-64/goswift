@@ -12,10 +12,10 @@ func (ctx *Context) stringEntityType(entity *demangling.Node, t *demangling.Node
 		}
 		if t.Kind == demangling.DependentGenericTypeKind {
 			if genericFunctionTypeList == nil {
-				ctx.stringNode(entity.FirstChild(), depth+1, false)
+				ctx.stringNode(t.FirstChild(), depth+1, false)
 			}
 			dependentType := t.Children[1]
-			if ctx.needSpaceBeforeType(dependentType) {
+			if needSpaceBeforeType(dependentType) {
 				ctx.WriteByte(' ')
 			}
 			t = dependentType.FirstChild()

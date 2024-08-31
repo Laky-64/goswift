@@ -10,7 +10,7 @@ func (ctx *Context) Result() (*Node, error) {
 		if err != nil {
 			return nil, err
 		} else if node == nil {
-			return nil, fmt.Errorf("missing node")
+			return nil, fmt.Errorf("missing %c node, processed text: %s", ctx.Data[ctx.Pos-1], ctx.Data[:ctx.Pos-1])
 		}
 		ctx.pushNode(node)
 	}

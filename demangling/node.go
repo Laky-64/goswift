@@ -94,6 +94,10 @@ func createWithChildren(kind NodeKind, children ...*Node) *Node {
 	}
 }
 
+func (ctx *Context) createWithPoppedType(kind NodeKind) *Node {
+	return createWithChildren(kind, ctx.popNodeKind(TypeKind))
+}
+
 func CreateType(child *Node) *Node {
 	return createWithChildren(TypeKind, child)
 }
@@ -141,13 +145,16 @@ func (ctx *Context) popNodePred(pred func(NodeKind) bool) *Node {
 
 func (ctx *Context) popModule() *Node {
 	if node := ctx.popNodeKind(IdentifierKind); node != nil {
-		node.Kind = ModuleKind
+		newNode := createNode(ModuleKind)
+		newNode.Text = node.Text
+		newNode.Index = node.Index
+		return newNode
 	}
 	return ctx.popNodeKind(ModuleKind)
 }
 
 func (ctx *Context) popContext() *Node {
-	if mod := ctx.popNodeKind(ModuleKind); mod != nil {
+	if mod := ctx.popModule(); mod != nil {
 		return mod
 	}
 	if node := ctx.popNodeKind(TypeKind); node != nil {
@@ -224,7 +231,7 @@ func (ctx *Context) popFunctionType(kind NodeKind, hasClangType bool) *Node {
 	funcType := createNode(kind)
 	var clangType *Node
 	if hasClangType {
-		clangType = ctx.demangleClangType()
+		clangType = ctx.clangType()
 	}
 	addChild(funcType, clangType)
 	addChild(funcType, ctx.popNodeKind(GlobalActorFunctionTypeKind))
@@ -355,42 +362,152 @@ func (ctx *Context) popFunctionParamLabels(typ *Node) *Node {
 	return labelList
 }
 
-func (ctx *Context) demangleClangType() *Node {
-	numChars := ctx.natural()
-	if numChars <= 0 || ctx.Pos+numChars > len(ctx.Data) {
+func (ctx *Context) popProtocol() *Node {
+	if t := ctx.popNodeKind(TypeKind); t != nil {
+		if len(t.Children) < 1 {
+			return nil
+		}
+		if !isProtocolNode(t) {
+			return nil
+		}
+		return t
+	}
+
+	if s := ctx.popNodeKind(ProtocolSymbolicReferenceKind); s != nil {
+		return s
+	} else if s = ctx.popNodeKind(ObjectiveCProtocolSymbolicReferenceKind); s != nil {
+		return s
+	}
+
+	name := ctx.popNodePred(isDeclName)
+	context := ctx.popContext()
+	proto := createWithChildren(ProtocolKind, context, name)
+	return CreateType(proto)
+}
+
+func (ctx *Context) popProtocolConformance() *Node {
+	genSig := ctx.popNodeKind(DependentGenericSignatureKind)
+	module := ctx.popModule()
+	proto := ctx.popProtocol()
+	typ := ctx.popNodeKind(TypeKind)
+	var ident *Node
+	if typ == nil {
+		ident = ctx.popNodeKind(IdentifierKind)
+		typ = ctx.popNodeKind(TypeKind)
+	}
+	if genSig != nil {
+		typ = CreateType(createWithChildren(DependentGenericTypeKind, genSig, typ))
+	}
+	conformance := createWithChildren(ProtocolConformanceKind, typ, proto, module)
+	addChild(conformance, ident)
+	return conformance
+}
+
+func (ctx *Context) popTypeList() *Node {
+	root := createNode(TypeListKind)
+	if ctx.popNodeKind(EmptyListKind) == nil {
+		var firstElem bool
+		for !firstElem {
+			firstElem = ctx.popNodeKind(FirstElementMarkerKind) != nil
+			ty := ctx.popNodeKind(TypeKind)
+			if ty == nil {
+				return nil
+			}
+			root.addChild(ty)
+		}
+		root.reverseChildren(0)
+	}
+	return root
+}
+
+func (ctx *Context) popAssocTypeName() *Node {
+	proto := ctx.popNodeKind(TypeKind)
+	if proto != nil && !isProtocolNode(proto) {
 		return nil
 	}
-	mangledClangType := string(ctx.Data[ctx.Pos : ctx.Pos+numChars])
-	ctx.Pos += numChars
-	return createNodeWithText(ClangTypeKind, mangledClangType)
+	if proto == nil {
+		proto = ctx.popNodeKind(ProtocolSymbolicReferenceKind)
+	}
+	if proto == nil {
+		proto = ctx.popNodeKind(ObjectiveCProtocolSymbolicReferenceKind)
+	}
+	id := ctx.popNodeKind(IdentifierKind)
+	assocTy := createWithChildren(DependentAssociatedTypeRefKind, id)
+	addChild(assocTy, proto)
+	return assocTy
 }
 
-func (ctx *Context) createWithPoppedType(kind NodeKind) *Node {
-	return createWithChildren(kind, ctx.popNodeKind(TypeKind))
+func (ctx *Context) popAssocTypePath() *Node {
+	assocTypePath := createNode(AssocTypePathKind)
+	var firstElem bool
+	for !firstElem {
+		firstElem = ctx.popNodeKind(FirstElementMarkerKind) != nil
+		assocTy := ctx.popAssocTypeName()
+		if assocTy == nil {
+			return nil
+		}
+		assocTypePath.addChild(assocTy)
+	}
+	assocTypePath.reverseChildren(0)
+	return assocTypePath
 }
 
-func (ctx *Context) addSubstitution(node *Node) {
-	if node != nil {
-		ctx.substitutions = append(ctx.substitutions, node)
+func (ctx *Context) popRetroactiveConformances() *Node {
+	var conformancesNode *Node
+	for {
+		conformance := ctx.popNodeKind(RetroactiveConformanceKind)
+		if conformance == nil {
+			break
+		}
+		if conformancesNode == nil {
+			conformancesNode = createNode(TypeListKind)
+		}
+		conformancesNode.addChild(conformance)
 	}
+	if conformancesNode != nil {
+		conformancesNode.reverseChildren(0)
+	}
+	return conformancesNode
 }
 
-func (ctx *Context) pushMultiSubstitutions(repeatCount, subStIdx int) (*Node, error) {
-	if subStIdx >= len(ctx.substitutions) {
-		return nil, fmt.Errorf("out of range substitution index %d", subStIdx)
+func (ctx *Context) popPack() *Node {
+	root := createNode(PackKind)
+	if ctx.popNodeKind(EmptyListKind) == nil {
+		var firstElem bool
+		for !firstElem {
+			firstElem = ctx.popNodeKind(FirstElementMarkerKind) != nil
+			ty := ctx.popNodeKind(TypeKind)
+			if ty == nil {
+				return nil
+			}
+			root.addChild(ty)
+		}
+		root.reverseChildren(0)
 	}
-	if repeatCount > maxRepeats {
-		return nil, fmt.Errorf("too many repeats")
-	}
-	nd := ctx.substitutions[subStIdx]
-	for i := 0; i < repeatCount; i++ {
-		ctx.pushNode(nd)
-	}
-	return nd, nil
+	return CreateType(root)
 }
 
-// Reference:
-// https://github.com/swiftlang/swift/blob/main/lib/Demangling/Demangler.cpp#L110
-func isContext(_ NodeKind) bool {
-	return true
+func (ctx *Context) popSILPack() (*Node, error) {
+	var root *Node
+	switch ctx.nextChar() {
+	case 'd':
+		root = createNode(SILPackDirectKind)
+	case 'i':
+		root = createNode(SILPackIndirectKind)
+	default:
+		return nil, fmt.Errorf("unexpected sil pack kind: %c", ctx.nextChar())
+	}
+	if ctx.popNodeKind(EmptyListKind) == nil {
+		var firstElem bool
+		for !firstElem {
+			firstElem = ctx.popNodeKind(FirstElementMarkerKind) != nil
+			ty := ctx.popNodeKind(TypeKind)
+			if ty == nil {
+				return nil, fmt.Errorf("expected type in sil pack")
+			}
+			root.addChild(ty)
+		}
+		root.reverseChildren(0)
+	}
+	return CreateType(root), nil
 }

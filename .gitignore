@@ -4,3 +4,5 @@ go.sum
 *.gif
 *.exe
 *.exe~
+testlib
+main.go
