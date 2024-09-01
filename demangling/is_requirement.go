@@ -13,19 +13,3 @@ func isRequirement(kind NodeKind) bool {
 		return false
 	}
 }
-
-/*
-bool isRequirement(Node::Kind kind) {
-  switch (kind) {
-    case Node::Kind::DependentGenericParamPackMarker:
-    case Node::Kind::DependentGenericSameTypeRequirement:
-    case Node::Kind::DependentGenericSameShapeRequirement:
-    case Node::Kind::DependentGenericLayoutRequirement:
-    case Node::Kind::DependentGenericConformanceRequirement:
-    case Node::Kind::DependentGenericInverseConformanceRequirement:
-      return true;
-    default:
-      return false;
-  }
-}
-*/
