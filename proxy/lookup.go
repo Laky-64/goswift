@@ -7,47 +7,73 @@ import (
 	"strings"
 )
 
-func (ctx *Context) lookup(kind demangling.SymbolicReferenceKind, addr uint64) (*demangling.Node, error) {
+func (ctx *Context) lookup(kind demangling.SymbolicReferenceKind, directness demangling.Directness, addr uint64) (*demangling.Node, error) {
 	var name string
 	var nodeKind demangling.NodeKind
 	var isType bool
 	switch kind {
 	case demangling.SymbolicContext:
-		ptr, err := ctx.GetPointerAtAddress(addr)
-		if err != nil {
-			return nil, err
-		}
-		ptr = ctx.SlidePointer(ptr)
-		if bind, err := ctx.GetBindName(ptr); err == nil {
-			name = bind
-			nodeKind = demangling.OpaqueTypeDescriptorSymbolicReferenceKind
-		} else {
-			if ptr == 0 {
-				name, err = ctx.symbolLookup(addr)
-				if err != nil {
-					return nil, err
-				}
+		switch directness {
+		case demangling.Direct:
+			if err := ctx.cr.SeekToAddr(addr); err != nil {
+				return nil, fmt.Errorf("failed to seek to swift context descriptor: %v", err)
+			}
+			contextDesc, err := ctx.getContextDesc(addr)
+			if err != nil {
+				return nil, fmt.Errorf("failed to read swift context descriptor: %v", err)
+			}
+			name = contextDesc.Name
+			if len(contextDesc.Parent) > 0 {
+				name = contextDesc.Parent + "." + name
+			}
+
+			switch contextDesc.Flags.Kind() {
+			case swift.CDKindProtocol:
+				nodeKind = demangling.ProtocolSymbolicReferenceKind
+			case swift.CDKindOpaqueType:
+				nodeKind = demangling.OpaqueTypeDescriptorSymbolicReferenceKind
+			default:
 				nodeKind = demangling.TypeSymbolicReferenceKind
 				isType = true
+			}
+		case demangling.Indirect:
+			ptr, err := ctx.GetPointerAtAddress(addr)
+			if err != nil {
+				return nil, err
+			}
+			ptr = ctx.SlidePointer(ptr)
+			if bind, err := ctx.GetBindName(ptr); err == nil {
+				name = bind
+				nodeKind = demangling.OpaqueTypeDescriptorSymbolicReferenceKind
 			} else {
-				if err = ctx.cr.SeekToAddr(ctx.SlidePointer(ptr)); err != nil {
-					return nil, fmt.Errorf("failed to seek to indirect context descriptor: %v", err)
-				}
-				contextDesc, err := ctx.getContextDesc(ctx.SlidePointer(ptr))
-				if err != nil {
-					return nil, fmt.Errorf("failed to read indirect context descriptor: %v", err)
-				}
-				name = contextDesc.Name
-				if len(contextDesc.Parent) > 0 {
-					name = contextDesc.Parent + "." + name
-				}
-				if contextDesc.Flags.Kind() == swift.CDKindProtocol {
-					nodeKind = demangling.ProtocolSymbolicReferenceKind
-				} else if contextDesc.Flags.Kind() == swift.CDKindOpaqueType {
-					nodeKind = demangling.OpaqueTypeDescriptorSymbolicReferenceKind
-				} else {
+				if ptr == 0 {
+					name, err = ctx.symbolLookup(addr)
+					if err != nil {
+						return nil, err
+					}
 					nodeKind = demangling.TypeSymbolicReferenceKind
 					isType = true
+				} else {
+					if err = ctx.cr.SeekToAddr(ctx.SlidePointer(ptr)); err != nil {
+						return nil, fmt.Errorf("failed to seek to indirect context descriptor: %v", err)
+					}
+					contextDesc, err := ctx.getContextDesc(ctx.SlidePointer(ptr))
+					if err != nil {
+						return nil, fmt.Errorf("failed to read indirect context descriptor: %v", err)
+					}
+					name = contextDesc.Name
+					if len(contextDesc.Parent) > 0 {
+						name = contextDesc.Parent + "." + name
+					}
+					switch contextDesc.Flags.Kind() {
+					case swift.CDKindProtocol:
+						nodeKind = demangling.ProtocolSymbolicReferenceKind
+					case swift.CDKindOpaqueType:
+						nodeKind = demangling.OpaqueTypeDescriptorSymbolicReferenceKind
+					default:
+						nodeKind = demangling.TypeSymbolicReferenceKind
+						isType = true
+					}
 				}
 			}
 		}

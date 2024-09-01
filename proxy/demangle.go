@@ -12,7 +12,7 @@ func (ctx *Context) Demangle(addr uint64) (*demangling.Node, error) {
 		return nil, err
 	}
 	demangler.SetSymbolicReferenceResolver(func(kind demangling.SymbolicReferenceKind, directness demangling.Directness, index int32) (*demangling.Node, error) {
-		return ctx.lookup(kind, addr+uint64(1+int64(index)))
+		return ctx.lookup(kind, directness, addr+uint64(1+int64(index)))
 	})
 	node, err := demangler.Result()
 	if err != nil {
